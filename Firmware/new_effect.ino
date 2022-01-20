@@ -1569,7 +1569,7 @@ void StrobeAndDiffusion() {
       }
     } else {
       if ((step % STEP) == 0) {   // big layers
-        drawPixelXY(0, y * 3 + DELTA, CHSV((hue + deltaHue), 255U, 255U));
+        drawPixelXY(0, y * 3 + DELTA, CHSV((step + deltaHue), 255U, 255U));
       } else {
         drawPixelXY(0, y * 3 + DELTA, CHSV(0U, 255U, 0U));
       }
