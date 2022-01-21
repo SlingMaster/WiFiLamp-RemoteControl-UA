@@ -162,6 +162,7 @@ bool dawnFlag = false;
 uint32_t thisTime;
 bool manualOff = false;
 
+uint8_t FPSdelay = DEF_DELAY;
 uint8_t currentMode = 0;
 bool loadingFlag = true;
 uint8_t custom_eff = 0;

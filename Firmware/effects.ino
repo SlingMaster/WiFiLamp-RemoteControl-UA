@@ -3736,7 +3736,7 @@ void twinklesRoutine() {
 }
 
 // =====================================
-//                Mepцaниe
+//           Mячики бeз гpaниц
 // =====================================
 // Aurora : https://github.com/pixelmatix/aurora/blob/master/PatternBounce.h
 // Copyright © 2014 Jason Coon
