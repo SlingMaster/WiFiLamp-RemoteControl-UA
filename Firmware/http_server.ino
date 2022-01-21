@@ -259,7 +259,7 @@ void handle_cmd() {
     case CMD_SAVE_ALARMS :
       // configSetup = valStr;
       body += "\"cfg_save\":\"OK\",";
-      writeFile("alarm_config.json", valStr);
+      saveAlarm(valStr);
       valStr = "";
       break;
     // fs commands ----------

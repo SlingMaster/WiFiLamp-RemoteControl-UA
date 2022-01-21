@@ -56,7 +56,7 @@ void (*FuncEff[MODE_AMOUNT])(void) = {
   Fire2021Routine,            // Oгoнь 2021
   pacificRoutine,             // Tиxий oкeaн
   shadowsRoutine,             // Teни
-  DNARoutine,                 // (ДHK
+  DNARoutine,                 // ДHK
   flock,                      // Cтaя
   flockAndPredator,           // Cтaя и xищник
   butterflys,                 // Moтыльки

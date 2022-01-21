@@ -81,10 +81,12 @@ void timeTick() {
       printTime(thisTime, false, ONflag);                                 // проверка текущего времени и его вывод (если заказан и если текущее время соответстует заказанному расписанию вывода)
 
       // проверка рассвета
+      // LOG.println("DAY[" + String(thisDay) + "] [ " + (alarms[thisDay].State == 1 ? "•" : " ") + " ] Time: " + String(thisTime) + " | Alarms Start: " + String(alarms[thisDay].Time) + " | End: " + String(alarms[thisDay].Time + DAWN_TIMEOUT) );
+
       if (alarms[thisDay].State &&                                                                                          // день будильника
           thisTime >= (uint16_t)constrain(alarms[thisDay].Time - pgm_read_byte(&dawnOffsets[dawnMode]), 0, (24 * 60)) &&    // позже начала
-          thisTime < (alarms[thisDay].Time + DAWN_TIMEOUT))                                                                 // раньше конца + минута
-      {
+          thisTime < (alarms[thisDay].Time + DAWN_TIMEOUT)) {                                                                // раньше конца + минута
+
         if (!manualOff) {                                                  // будильник не был выключен вручную (из приложения или кнопкой)
           // величина рассвета 0-255
           int32_t dawnPosition = 255 * ((float)(thisFullTime - (alarms[thisDay].Time - pgm_read_byte(&dawnOffsets[dawnMode])) * 60) / (pgm_read_byte(&dawnOffsets[dawnMode]) * 60));
@@ -241,4 +243,31 @@ String Get_Time(time_t LocalTime) {
   int i = Time.indexOf(":"); //Ишем позицию первого символа :
   Time = Time.substring(i - 2, i + 6); // Выделяем из строки 2 символа перед символом : и 6 символов после
   return Time; // Возврашаем полученное время
+}
+
+// --------------------------------------
+void saveAlarm(String configAlarm) {
+  char i[2];
+#ifdef GENERAL_DEBUG
+  LOG.println ("\nУстановки будильника");
+#endif
+  // подготовка  строк с именами полей json file
+  for (uint8_t k = 0; k < 7; k++) {
+    itoa ((k + 1), i, 10);
+    i[1] = 0;
+    String a = "a" + String (i) ;
+    String h = "h" + String (i) ;
+    String m = "m" + String (i) ;
+    //сохранение установок будильника
+    alarms[k].State = (jsonReadtoInt(configAlarm, a));
+    alarms[k].Time = (jsonReadtoInt(configAlarm, h)) * 60 + (jsonReadtoInt(configAlarm, m));
+#ifdef GENERAL_DEBUG
+    LOG.println("day week " + String(k) + ".[ " + (alarms[k].State == 1 ? "•" : " ") + " ] | Time: " + String(alarms[k].Time));
+#endif
+    EepromManager::SaveAlarmsSettings(&k, alarms);
+  }
+  dawnMode = jsonReadtoInt(configAlarm, "t") - 1;
+  DAWN_TIMEOUT = jsonReadtoInt(configAlarm, "after");
+  EepromManager::SaveDawnMode(&dawnMode);
+  writeFile("alarm_config.json", configAlarm );
 }
