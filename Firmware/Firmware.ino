@@ -3,7 +3,7 @@
   Исходники авторской (старой) прошивки на GitHub: https://github.com/AlexGyver/GyverLamp/
   Страница проекта (схемы, описания): https://alexgyver.ru/GyverLamp/
 
-  Автор идеи и первой реализации: AlexGyver, 
+  Автор идеи и первой реализации: AlexGyver,
   AlexGyver Technologies, 2019  | https://AlexGyver.ru/
   ==========================================================================================
   Исходники последней версии: https://github.com/SlingMaster/WiFiLamp-RemoteControl
@@ -162,7 +162,7 @@ bool dawnFlag = false;
 uint32_t thisTime;
 bool manualOff = false;
 
-uint8_t FPSdelay = DEF_DELAY;
+uint8_t FPSdelay = DYNAMIC;
 uint8_t currentMode = 0;
 bool loadingFlag = true;
 uint8_t custom_eff = 0;
@@ -212,6 +212,7 @@ uint8_t EFF_FAV;
 uint8_t WORKGROUP;
 String LAMP_LIST;
 
+//---------------------------------------
 void setup() {
   Serial.begin(115200);
   Serial.println();
@@ -244,7 +245,7 @@ void setup() {
   LOG.print (F("Старт WebServer\n"));
   // HTTP --------------------------------
   runServerHTTP();
-  
+
   // ==================================================================
   // Инициализируем переменные, хранящиеся в файле config.json
   // ==================================================================
@@ -462,9 +463,10 @@ void setup() {
   delay (100);
   my_timer = millis();
   auto_swap_timer = millis();
+  setFPS();
 }
 
-
+//---------------------------------------
 void loop() {
   if (espMode) {
     if (WiFi.status() != WL_CONNECTED) {
@@ -504,6 +506,12 @@ void loop() {
       LOG.println ("***********************************************");
       LOG.println("     Version • " + VERSION + " effects");
 #endif
+#ifdef SHOW_IP_TO_START
+      ONflag = false;
+      showIP();
+      FastLED.clear();
+      FastLED.delay(2);
+#endif SHOW_IP_TO_START
       delay (100);
     }
   }
@@ -550,8 +558,11 @@ void loop() {
 #if defined(USE_NTP) || defined(USE_MANUAL_TIME_SETTING) || defined(GET_TIME_FROM_PHONE)
             , &dawnFlag
 #endif
+#ifdef RANDOM_SETTINGS_IN_CYCLE_MODE
             , &random_on
             , &selectedSettings
+            , setFPS
+#endif
           )) {
 #ifdef USE_BLYNK
         updateRemoteBlynkParams();
