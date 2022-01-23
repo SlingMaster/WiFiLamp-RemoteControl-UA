@@ -414,7 +414,7 @@ void fireRoutine() {
 #endif //#if defined(USE_RANDOM_SETS_IN_APP) || defined(RANDOM_SETTINGS_IN_CYCLE_MODE)
 
     loadingFlag = false;
-    //FastLED.clear();
+    FastLED.clear();
     generateLine();
     //memset(matrixValue, 0, sizeof(matrixValue)); без очистки
     pcnt = 0;
@@ -925,17 +925,18 @@ void stormRoutine2() {// (bool isColored) { // сворачиваем 2 эффе
 //                Матрица
 // =====================================
 void matrixRoutine() {
+  if (loadingFlag) {
 #if defined(USE_RANDOM_SETS_IN_APP) || defined(RANDOM_SETTINGS_IN_CYCLE_MODE)
-  if (selectedSettings) {
-    setModeSettings(1U + random8(90U), 165U + random8(66U));
-  }
+    if (selectedSettings) {
+      setModeSettings(1U + random8(90U), 165U + random8(66U));
+    }
 #endif //#if defined(USE_RANDOM_SETS_IN_APP) || defined(RANDOM_SETTINGS_IN_CYCLE_MODE)
-
-  for (uint8_t x = 0U; x < WIDTH; x++)
-  {
+    loadingFlag = false;
+    FastLED.clear();
+  }
+  for (uint8_t x = 0U; x < WIDTH; x++) {
     // обрабатываем нашу матрицу снизу вверх до второй сверху строчки
-    for (uint8_t y = 0U; y < HEIGHT - 1U; y++)
-    {
+    for (uint8_t y = 0U; y < HEIGHT - 1U; y++) {
       uint32_t thisColor = getPixColorXY(x, y);                                              // берём цвет нашего пикселя
       uint32_t upperColor = getPixColorXY(x, y + 1U);                                        // берём цвет пикселя над нашим
       if (upperColor >= 0x900000 && random(7 * HEIGHT) != 0U)                  // если выше нас максимальная яркость, игнорим этот факт с некой вероятностью или опускаем цепочку ниже
@@ -1009,8 +1010,7 @@ void butterflysRoutine(bool isColored)
 #endif //#if defined(USE_RANDOM_SETS_IN_APP) || defined(RANDOM_SETTINGS_IN_CYCLE_MODE)
 
   bool isWings = modes[currentMode].Speed & 0x01;
-  if (loadingFlag)
-  {
+  if (loadingFlag) {
     loadingFlag = false;
     speedfactor = (float)modes[currentMode].Speed / 2048.0f + 0.001f;
     if (isColored) // для режима смены цвета фона фиксируем количество мотыльков
@@ -6941,27 +6941,27 @@ void lumenjerRoutine() {
 }
 
 // =====================================
-//         ЭФФЕКТЫ НА ЛЮБИТЕЛЯ 
+//         ЭФФЕКТЫ НА ЛЮБИТЕЛЯ
 // =====================================
 
 /*
-// =====================================
-//          Блуждающий кубик
-// =====================================
-//
-#define RANDOM_COLOR          (1U)                          // случайный цвет при отскоке
-int16_t coordB[2U];
-int8_t vectorB[2U];
-CHSV _pulse_color;
-CRGB ballColor;
+  // =====================================
+  //          Блуждающий кубик
+  // =====================================
+  //
+  #define RANDOM_COLOR          (1U)                          // случайный цвет при отскоке
+  int16_t coordB[2U];
+  int8_t vectorB[2U];
+  CHSV _pulse_color;
+  CRGB ballColor;
 
-void ballRoutine() {
+  void ballRoutine() {
   if (loadingFlag) {
-#if defined(USE_RANDOM_SETS_IN_APP) || defined(RANDOM_SETTINGS_IN_CYCLE_MODE)
+  #if defined(USE_RANDOM_SETS_IN_APP) || defined(RANDOM_SETTINGS_IN_CYCLE_MODE)
     if (selectedSettings) {
       setModeSettings(13U + random8(88U) , 155U + random8(46U));
     }
-#endif //#if defined(USE_RANDOM_SETS_IN_APP) || defined(RANDOM_SETTINGS_IN_CYCLE_MODE)
+  #endif //#if defined(USE_RANDOM_SETS_IN_APP) || defined(RANDOM_SETTINGS_IN_CYCLE_MODE)
 
     loadingFlag = false;
     //FastLED.clear();
@@ -7023,5 +7023,5 @@ void ballRoutine() {
       leds[XY(coordB[0U] / 10 + i, coordB[1U] / 10 + j)] = ballColor;
     }
   }
-}
+  }
 */

@@ -34,7 +34,9 @@ CRGBPalette16 currentPalette(PartyColors_p);
 uint8_t colorLoop = 1;
 uint8_t ihue = 0;
 
-//---------------------------------------
+// =====================================
+//               Бeзyмиe
+// =====================================
 void madnessNoiseRoutine() {
   if (loadingFlag) {
 #if defined(USE_RANDOM_SETS_IN_APP) || defined(RANDOM_SETTINGS_IN_CYCLE_MODE)

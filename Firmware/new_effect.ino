@@ -1534,6 +1534,7 @@ void StrobeAndDiffusion() {
     }
 #endif
     loadingFlag = false;
+    FPSdelay = 25U; // LOW_DELAY;
     hue2 = 1;
     FastLED.clear();
   }
@@ -1542,9 +1543,11 @@ void StrobeAndDiffusion() {
   if (modes[currentMode].Scale > 50) {
     // diffusion ---
     blurScreen(beatsin8(3, 64, 80));
+    FPSdelay = LOW_DELAY;
     STEP = 1U;
     if (modes[currentMode].Scale < 75) {
       // chaos ---
+      FPSdelay = 30;
       VirtualSnow();
     }
 
@@ -1552,13 +1555,15 @@ void StrobeAndDiffusion() {
     // strob -------
     if (modes[currentMode].Scale > 25) {
       dimAll(200);
+      FPSdelay = 30;
     } else {
       dimAll(240);
+      FPSdelay = 40;
     }
   }
 
   const uint8_t rows = (HEIGHT + 1) / 3U;
-  deltaHue = floor(modes[currentMode].Speed / 64) * 48;
+  deltaHue = floor(modes[currentMode].Speed / 64) * 64;
   bool dir = false;
   for (uint8_t y = 0; y < rows; y++) {
     if (dir) {

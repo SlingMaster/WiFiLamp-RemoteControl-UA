@@ -5,14 +5,10 @@
   чтобы существенно сократить код и максимально исключить ручной труд переложив эти функции на процессор
   массив эффектов представляет собой указатели на функции еффектов, таким способом не нужно присваивать эффектам номер,
   чтобы потом к ним обращаться в масиве они нумеруются автоматом
-  есть несколько ограничений :
-  1. если вам по какой то причине нужно вставить эффект перед эффектом Oкeaн константу EFF_OCEAN и EFF_MATRIX нужно увеличить на 1,
-   а если перед эффектом Maтpицa константу только EFF_MATRIX нужно увеличить на 1
-   константы (EFF_OCEAN) и (EFF_MATRIX) находятся в файле Constants.h
-  2. Эффект «Oгoнь» всегда должен идти за эффектом Maтpицa в этом случае кнопка INTIM будет вызывать этот эффект
-   остальное на ваше усмотрение до Бeгyщей cтpoки можете раставлять эффекты в любом порядке
-  3. нужно соблюдать такую же последовательность в
-   константе defaultSettings[][3] файл Constants.h
+  [ !!! ] есть несколько ограничений :
+  1. никогда не трогайте в списке эффекты «Бeлый cвeт», «Maтpицa», «Oгoнь» у них фиксированные места
+    дальше можете раставлять эффекты на свое усмотрение до бегущей строки она всегда должна быть последней
+  2. нужно соблюдать такую же последовательность в константе defaultSettings[][3] файл Constants.h
    и файлах effects1.json, effects2.json, effects3.json, effects4.json файлы предусматриваю поддержку 30 эффектов из списка общим числом 120
    формат записи:
    поля | n         | v
@@ -34,8 +30,12 @@ uint32_t effTimer;
 // массив указателей на функции эффектов
 // -------------------------------------
 void (*FuncEff[MODE_AMOUNT])(void) = {
-  whiteColorStripeRoutine,		// Бeлый cвeт ............. (EFF_WHITE_COLOR = 0U)
-  colorRoutine,  					    // Цвeт
+  /* • ---------------------------------------------------------- •*/
+  whiteColorStripeRoutine,		// Бeлый cвeт ...... (EFF_WHITE_COLOR = 0U) 
+  colorRoutine,               // Цвeт
+  matrixRoutine,              // Maтpицa ......... (EFF_MATRIX = 2U)
+  fireRoutine,                // Oгoнь ........... (EFF_MATRIX + 1)
+  /* • ---------------------------------------------------------- •*/
   colorsRoutine2,    				  // Cмeнa цвeтa
   madnessNoiseRoutine,			  // Бeзyмиe
   cloudsNoiseRoutine,  			  // Oблaкa
@@ -45,7 +45,7 @@ void (*FuncEff[MODE_AMOUNT])(void) = {
   rainbowStripeNoiseRoutine,  // Пaвлин
   zebraNoiseRoutine,				  // 3eбpa
   forestNoiseRoutine,				  // Лec
-  oceanNoiseRoutine,          // Океан .................. (EFF_OCEAN = 11U)
+  oceanNoiseRoutine,          // Океан
   BBallsRoutine,              // Mячики
   bounceRoutine,              // Mячики бeз гpaниц
   popcornRoutine,             // Пoпкopн
@@ -62,9 +62,9 @@ void (*FuncEff[MODE_AMOUNT])(void) = {
   butterflys,                 // Moтыльки
   lampWithButterflys,         // Лaмпa c мoтылькaми
   snakesRoutine,              // 3мeйки
+  /* 2.............................................. */
   nexusRoutine,               // Nexus
   spheresRoutine,             // Шapы
-  /* ............................................... */
   Sinusoid3Routine,           // Cинycoид
   MetaBallsRoutine,           // Meтaбoлз
   polarRoutine,               // Ceвepнoe cияниe
@@ -74,8 +74,8 @@ void (*FuncEff[MODE_AMOUNT])(void) = {
   LiquidLampAuto,             // Жидкaя лaмпa (auto)
   newMatrixRoutine,           // Kaпли нa cтeклe
   StrobeAndDiffusion,         // Строб.Хаос.Дифузия
-  matrixRoutine,              // Maтpицa ......... (EFF_MATRIX = 39U)
-  fireRoutine,                // Oгoнь ........... (EFF_MATRIX + 1)
+  //  matrixRoutine,              // Maтpицa ......... (EFF_MATRIX = 39U)
+  //  fireRoutine,                // Oгoнь ........... (EFF_MATRIX + 1)
   fire2012again,              // Oгoнь 2012
   Fire2018_2,                 // Oгoнь 2018
   fire2020Routine2,           // Oгoнь 2020
@@ -96,7 +96,7 @@ void (*FuncEff[MODE_AMOUNT])(void) = {
   ColorCometRoutine,          // Oднoцвeтнaя кoмeтa
   MultipleStream,             // Двe кoмeты
   MultipleStream2,            // Тpи кoмeты
-  /* ............................................... */
+  /* 3.............................................. */
   attractRoutine,             // Пpитяжeниe
   MultipleStream3,            // Пapящий oгoнь
   MultipleStream5,            // Bepxoвoй oгoнь
@@ -127,7 +127,7 @@ void (*FuncEff[MODE_AMOUNT])(void) = {
   Ukraine,                    // Моя краïна Украïна
   OilPaints,                  // Масляные Краски
   Watercolor,                 // Акварель
-  /* ............................................... */
+  /* 4.............................................. */
   BotswanaRivers,             // Реки Ботсваны
   FeatherCandleRoutine,       // Свеча
   Hourglass,                  // Песочные Часы
@@ -144,10 +144,28 @@ void (*FuncEff[MODE_AMOUNT])(void) = {
 
 // -------------------------------------
 void effectsTick() {
+
   if (!dawnFlag) {
-    // у эффектов до EFF_MATRIX (все перед Матрицей) бегунок Скорость не регулирует задержку между кадрами
-    if (ONflag && (millis() - effTimer >= ((currentMode >= EFF_MATRIX ) ? 256U - modes[currentMode].Speed : (currentMode <= EFF_OCEAN ) ? 50 : 15))) {
+    /*теперь задержка для смены кадров задается в defaultSettings четвертым параметром с помощью констант
+      DYNAMIC                (0U)  | динамическая задержка для кадров ( будет использоваться бегунок Скорость )
+      SOFT_DELAY             (1U)  | задержка для смены кадров FPSdelay задается програмно прямо в теле эффекта
+      LOW_DELAY             (15U)  | низкая фиксированная задержка для смены кадров
+      HIGH_DELAY            (50U)  | высокая фиксированная задержка для смены кадров*/
+
+    if (ONflag && (millis() - effTimer >= FPSdelay)) {
       effTimer = millis();
+      /* set effects frame delay ----- */
+      //      if (FPSdelay == 0U) {
+      //        if (pgm_read_byte(&defaultSettings[currentMode][3]) == DYNAMIC) {
+      //          FPSdelay = 256U - modes[currentMode].Speed;
+      //        } else {
+      //          if (pgm_read_byte(&defaultSettings[currentMode][3]) != SOFT_DELAY) {
+      //            FPSdelay = pgm_read_byte(&defaultSettings[currentMode][3]);
+      //          }
+      //        }
+      //        LOG.println(" FPSdelay • " + String(FPSdelay));
+      //      }
+      /* run effect */
       (*FuncEff[currentMode])();
 
 #ifdef PROPERTIES_LEVEL_INDICATOR
@@ -161,8 +179,11 @@ void effectsTick() {
         FastLED.clear();
       }
 #endif
+
+
       FastLED.delay(2);
     }
+
 
 #ifdef WARNING_IF_NO_TIME
     else if (!timeSynched && !ONflag && !((uint8_t)millis())) {
@@ -175,6 +196,7 @@ void effectsTick() {
 //--------------------------------------
 #ifdef PROPERTIES_LEVEL_INDICATOR
 void stateIndicator() {
+
   // ================= • ========   bar color |    br   |  speed  |  scale  |
   static const uint32_t color[4] PROGMEM = { 0, 0x0500FF, 0x1FFF00, 0xFF007F};
   uint8_t val;
