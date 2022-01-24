@@ -1601,5 +1601,218 @@ void StrobeAndDiffusion() {
 }
 
 // =====================================
-//
+//               Фейерверк
+//                Firework
+//             © SlingMaster
 // =====================================
+void VirtualExplosion() {
+  uint8_t horizont = HEIGHT * 0.25;
+  const int8_t STEP = 255 / HEIGHT;
+  for (uint8_t x = 0U; x < WIDTH; x++) {
+    hue = random8(255);
+    for (uint8_t y =  horizont; y < HEIGHT - 1; y++) {
+      noise3d[0][x][y] = noise3d[0][x][y + 1];
+      if (noise3d[0][x][y] > 0) {
+        //        uint8_t bri = (HEIGHT - y) * STEP;
+        uint8_t bri = y * STEP;
+        drawPixelXY(x, y, CHSV(hue, 255U, bri));
+      }
+    }
+  }
+  uint8_t posX = random(WIDTH);
+  for (uint8_t x = 0U; x < WIDTH; x++) {
+    // заполняем случайно верхнюю строку
+    if (posX == x) {
+      if (step % 3 == 0) {
+        noise3d[0][x][HEIGHT - 1U] = 1;
+      } else {
+        noise3d[0][x][HEIGHT - 1U]  = 0;
+      }
+    } else {
+      noise3d[0][x][HEIGHT - 1U]  = 0;
+    }
+  }
+}
+/*
+  //void Firework() {
+  //  const uint8_t SPEED_FLY = 10U;
+  //  const uint8_t DELTA = 1U;         // центровка по вертикали
+  //  uint8_t STEP = 2U;
+  //  int deltaX;
+  //  if (loadingFlag) {
+  //#if defined(USE_RANDOM_SETS_IN_APP) || defined(RANDOM_SETTINGS_IN_CYCLE_MODE)
+  //    if (selectedSettings) {
+  //      // scale | speed
+  //      setModeSettings(1U + random8(100U), 1U + random8(150U));
+  //    }
+  //#endif
+  //    loadingFlag = false;
+  //    FPSdelay = SPEED_FLY; // LOW_DELAY;
+  //    hue2 = 1;
+  //    step = 0;
+  //    FastLED.clear();
+  //  }
+  //
+  //  gradientVertical(0, 0, WIDTH, HEIGHT * 0.25, 170U, 170U, 96U, 0U, 255U);
+  //  //    gradientVertical(0, 0, WIDTH, HEIGHT, 170U, 170U, 96U, 0U, 255U);
+  //
+  //   shse
+  //  if (step < HEIGHT * 0.75 ) {
+  //    ===== фаза полета =====
+  //    const uint8_t saturation = (step > CENTER_Y_MINOR) ? 200U : 20U;
+  //    drawPixelXY(CENTER_X_MINOR, step,  CHSV(50U, saturation, 255U));
+  //    FPSdelay += 1U;
+  //    dimAll(170);
+  //  }
+  //  if ((step > CENTER_Y_MINOR ) & (step < HEIGHT * 1.5)) {
+  //    VirtualExplosion();
+  //  }
+  //  if (step == HEIGHT * 0.75 ) {
+  //    ===== фаза полета =====
+  //    dimAll(100);
+  //    // FPSdelay = 0U;
+  //    //
+  //  }
+  //  //  else if (step == floor(HEIGHT * 0.75) ) {
+  //  //    FPSdelay = 0U;
+  //  //    dimAll(100);
+  //  //    // blurScreen(beatsin8(3, 64, 80));
+  //  //  }
+  //  if (step > HEIGHT * 0.85) {
+  //    FPSdelay = 2U;
+  //    if (step > HEIGHT * 2) {
+  //
+  //      //      dimAll(180);
+  //      const uint8_t rows = (HEIGHT + 1) / 3U;
+  //      // deltaHue = floor(modes[currentMode].Speed / 64) * 64;
+  //      bool dir = false;
+  //     // VirtualExplosion();
+  //      dimAll(100);
+  //      for (uint8_t y = 0; y < rows; y++) {
+  //        // сдвигаем слои  ------------------
+  //        for (uint8_t x = 0U ; x < WIDTH; x++) {
+  //          if (dir) {  // <==
+  //            drawPixelXY(x - 1, y * 3 + DELTA, getPixColorXY(x, y * 3 + DELTA));
+  //          } else {    // ==>
+  //            drawPixelXY(WIDTH - x, y * 3 + DELTA, getPixColorXY(WIDTH - x - 1, y * 3 + DELTA));
+  //          }
+  //        }
+  //        dir = !dir;
+  //        //    blurScreen(20U);
+  //      }
+  //    }
+  //  }
+  //  //else {
+  //  //       ===== фаза eufcfybz =====
+  //  //      FPSdelay = HIGH_DELAY;
+  //  //      dimAll(254);
+  //  //    }
+  //  //
+  //  //  }
+  //
+
+  //  if (step > HEIGHT * 2) {
+  //    step = 0;
+  //    FPSdelay = HIGH_DELAY;;
+  //  }
+  //  if (step > HEIGHT * 3) {
+  //    step = 0;
+  //    FPSdelay = SPEED_FLY;
+  //  }
+  //  //  LOG.println("step:" + String(step) + " | FPSdelay • " + String(FPSdelay));
+  //  LOG.printf_P(PSTR("• [%03d] | %03d | %03d  | %03d | \n"), step, FPSdelay, modes[currentMode].Speed, modes[currentMode].Scale);
+  //  step++;
+  //}
+*/
+
+
+
+
+void Firework() {
+  const uint8_t SIZE = 3U;
+  const uint8_t DELTA = 1U;         // центровка по вертикали
+  uint8_t STEP = 2U;
+  if (loadingFlag) {
+#if defined(USE_RANDOM_SETS_IN_APP) || defined(RANDOM_SETTINGS_IN_CYCLE_MODE)
+    if (selectedSettings) {
+      // scale | speed
+      setModeSettings(1U + random8(100U), 1U + random8(150U));
+    }
+#endif
+    loadingFlag = false;
+    FPSdelay = 25U; // LOW_DELAY;
+    hue2 = 1;
+    FastLED.clear();
+  }
+
+  STEP = floor((255 - modes[currentMode].Speed) / 64) + 1U; // for strob
+  //  if (modes[currentMode].Scale > 50) {
+  //    // diffusion ---
+  //    blurScreen(beatsin8(3, 64, 80));
+  //    FPSdelay = LOW_DELAY;
+  //    STEP = 1U;
+  //    if (modes[currentMode].Scale < 75) {
+  //      // chaos ---
+  //      FPSdelay = 30;
+  //      VirtualSnow();
+  //    }
+  //
+  //  } else {
+  //    // strob -------
+  //    if (modes[currentMode].Scale > 25) {
+  //      dimAll(200);
+  //      FPSdelay = 30;
+  //    } else {
+  //      dimAll(240);
+  //      FPSdelay = 40;
+  //    }
+  //  }
+  if (step > CENTER_Y_MAJOR ) {
+    blurScreen(beatsin8(3, 64, 80));
+  }
+  dimAll(120);
+  /* draw sky */
+  gradientVertical(0, 0, WIDTH, HEIGHT * 0.25, 170U, 170U, 96U, 0U, 255U);
+  // chaos ---
+  FPSdelay = 40;
+  //  VirtualSnow();
+  if (step < CENTER_Y_MAJOR ) {
+    //    ===== фаза полета =====
+    const uint8_t saturation = (step > CENTER_Y_MINOR) ? 200U : 20U;
+    drawPixelXY(CENTER_X_MINOR, step,  CHSV(50U, saturation, 255U));
+  }
+  if ((step > CENTER_Y_MINOR ) & (step < HEIGHT * 1.5)) {
+    VirtualExplosion();
+
+    const uint8_t rows = (HEIGHT + 1) / 3U;
+    deltaHue = floor(modes[currentMode].Speed / 64) * 64;
+    bool dir = false;
+    for (uint8_t y = 0; y < rows; y++) {
+      if (dir) {
+        if ((step % STEP) == 0) {   // small layers
+          //        drawPixelXY(WIDTH - 1, y * 3 + DELTA, CHSV(step, 255U, 255U ));
+        } else {
+          drawPixelXY(WIDTH - 1, y * 3 + DELTA, CHSV(170U, 255U, 1U));
+        }
+      } else {
+        if ((step % STEP) == 0) {   // big layers
+          //        drawPixelXY(0, y * 3 + DELTA, CHSV((step + deltaHue), 255U, 255U));
+        } else {
+          drawPixelXY(0, y * 3 + DELTA, CHSV(0U, 255U, 0U));
+        }
+      }
+
+      // сдвигаем слои  ------------------
+      for (uint8_t x = 0U ; x < WIDTH; x++) {
+        if (dir) {  // <==
+          drawPixelXY(x - 1, y * 3 + DELTA, getPixColorXY(x, y * 3 + DELTA));
+        } else {    // ==>
+          drawPixelXY(WIDTH - x, y * 3 + DELTA, getPixColorXY(WIDTH - x - 1, y * 3 + DELTA));
+        }
+      }
+      dir = !dir;
+    }
+  }
+  step ++;
+  if (step >=  HEIGHT * 2) step == 0U;
+}
