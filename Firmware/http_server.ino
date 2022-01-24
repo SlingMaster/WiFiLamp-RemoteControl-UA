@@ -146,6 +146,7 @@ void handle_cmd() {
     case CMD_SPEED:
       modes[currentMode].Speed = val;
       loadingFlag = true;
+      updateSets();
 #ifdef USE_MULTIPLE_LAMPS_CONTROL
       multipleLampControl ();
 #endif  //USE_MULTIPLE_LAMPS_CONTROL
@@ -154,6 +155,7 @@ void handle_cmd() {
     case CMD_SCALE:
       modes[currentMode].Scale = val;
       loadingFlag = true;
+      updateSets();
 #ifdef USE_MULTIPLE_LAMPS_CONTROL
       multipleLampControl ();
 #endif  //USE_MULTIPLE_LAMPS_CONTROL
@@ -255,6 +257,7 @@ void handle_cmd() {
       body += "\"cfg_save\":\"OK\",";
       writeFile("config.json", configSetup);
       valStr = "";
+      warnDinamicColor(0);
       break;
     case CMD_SAVE_ALARMS :
       // configSetup = valStr;

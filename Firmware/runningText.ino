@@ -5,15 +5,19 @@ uint32_t scrollTimer = 0LL;
 
 // --------------------------------------
 boolean fillString(const char* text, CRGB letterColor, boolean itsText) {
+
   if (!text || !strlen(text)) {
     return true;
   }
   if (loadingFlag && !itsText) {
     offset = WIDTH;                                           // перемотка в правый край
     loadingFlag = false;
+    if (modes[MODE_AMOUNT - 1].Speed > 160) {
+      modes[MODE_AMOUNT - 1].Speed = 160;
+    }
   }
 
-  if (millis() - scrollTimer >= modes[MODE_AMOUNT - 1].Speed) {
+  if (millis() - scrollTimer >= 256U - modes[MODE_AMOUNT - 1].Speed) {
     scrollTimer = millis();
     FastLED.clear();
     uint8_t i = 0, j = 0;

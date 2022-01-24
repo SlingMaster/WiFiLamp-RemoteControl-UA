@@ -3,8 +3,8 @@
 #define CYCLE_DONT_OFF          (1U)          // Не отключать режим Цикл при выключении лампы = 1U, отключать = 0U
 #define CYCLE_TIMER             (60U)         // Интервал смены эффектов 60 секунд
 #define CYCLE_TIMER_PLUS        (0U)          // + случайное время от нуля до 0U секунд
-#define CYCLE_1ST_EFFECT        (2U)          // Эффекты до "2. Смена цвета" не будут демонстрироваться
-#define CYCLE_LAST_EFFECT       (MODE_AMOUNT - 2) // Эффекты Часы и бегущая строка не будут демонстрироваться
+#define CYCLE_1ST_EFFECT        (0U)          // c какого эффекта будет начинаться демонстрирация
+#define CYCLE_LAST_EFFECT       (EFF_MATRIX + 1) // последние эффекты не будут демонстрироваться
 
 BLYNK_CONNECTED()
 {
@@ -108,8 +108,7 @@ BLYNK_WRITE(V6)
     FavoritesManager::Interval = CYCLE_TIMER;
     FavoritesManager::Dispersion = CYCLE_TIMER_PLUS;
     FavoritesManager::UseSavedFavoritesRunning = CYCLE_DONT_OFF;
-    for (uint8_t i = 0; i < MODE_AMOUNT; i++)
-    {
+    for (uint8_t i = 0; i < MODE_AMOUNT; i++) {
       FavoritesManager::FavoriteModes[i] = (i < CYCLE_1ST_EFFECT || i > CYCLE_LAST_EFFECT) ? 0U : 1U;
     }
     updatePlayerBlynkParams(true);
@@ -171,8 +170,7 @@ void processParams(char *prefix, const char *paramValue)
     settChanged = true;
     eepromTimeout = millis();
 #if (USE_MQTT)
-    if (espMode == 1U)
-    {
+    if (espMode == 1U) {
       MqttManager::needToPublish = true;
     }
 #endif

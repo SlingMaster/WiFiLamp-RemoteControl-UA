@@ -26,8 +26,24 @@ void parseUDP() {
 }
 
 //---------------------------------------
+void setFPS() {
+  /* set effects frame delay ----- */
+  if (pgm_read_byte(&defaultSettings[currentMode][3]) == DYNAMIC) {
+    FPSdelay = 256U - modes[currentMode].Speed;
+  } else {
+    if (pgm_read_byte(&defaultSettings[currentMode][3]) != SOFT_DELAY) {
+      FPSdelay = pgm_read_byte(&defaultSettings[currentMode][3]);
+    }
+  }
+#ifdef GENERAL_DEBUG
+  LOG.println(" FPSdelay • " + String(FPSdelay));
+#endif
+}
+
+//---------------------------------------
 void updateSets() {
   loadingFlag = true;
+  setFPS();
   settChanged = true;
   eepromTimeout = millis();
 
@@ -682,13 +698,13 @@ void processInputBuffer(char *inputBuffer, char *outputBuffer, bool generateOutp
           loadingFlag = true; // Перезапуск эффекта
         }
       }
-
+      setFPS();
 #ifdef GENERAL_DEBUG
       String pwr = ((ONflag == 1) ? " • " : "off");
-      LOG.println ("\n ======= INBOUND WORKGROUP =======");
-      LOG.println (" | POWER | EFF | BRI | SPD | SCL |");
+      LOG.println ("\n  ====== INBOUND WORKGROUP ===== |  SET  |");
+      LOG.println   (" | POWER | EFF | BRI | SPD | SCL | DELAY |");
       LOG.print (" |  " + pwr);
-      LOG.printf_P(PSTR("  | %03d | %03d | %03d | %03d |\n"), currentMode, modes[currentMode].Brightness, modes[currentMode].Speed, modes[currentMode].Scale);
+      LOG.printf_P(PSTR("  | %03d | %03d | %03d | %03d | %05d |\n"), currentMode, modes[currentMode].Brightness, modes[currentMode].Speed, modes[currentMode].Scale, FPSdelay);
 #endif //GENERAL_DEBUG
     }
     inputBuffer[0] = '\0';

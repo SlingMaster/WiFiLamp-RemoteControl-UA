@@ -46,10 +46,10 @@ void showWarning(
 
 // ---------------------------------------
 void runEffect() {
-  //  currentEff = funcArray[currentMode]();
   FastLED.setBrightness(modes[currentMode].Brightness);
   loadingFlag = true;
   settChanged = true;
+  updateSets();
   eepromTimeout = millis();
 
   if (random_on && FavoritesManager::FavoritesRunning) {
@@ -111,10 +111,10 @@ void cycleEffect() {
 void autoSwapEff() {
   if (ONflag && eff_auto && (FavoritesManager::FavoritesRunning == 0)) {
     if (eff_rnd) {
-      currentMode = 1 + random8(MODE_AMOUNT - 3);
+      currentMode = random8(EFF_MATRIX + 1);
       runEffect();
     } else {
-      if (currentMode >= (MODE_AMOUNT - 3)) {
+      if (currentMode > (EFF_MATRIX)) {
         currentMode = 0;
       }
       prevEffect();
@@ -337,7 +337,7 @@ void buttonTick() {
 #ifdef GENERAL_DEBUG
             LOG.printf_P(PSTR("Новое значение скорости: %d\n\r"), modes[currentMode].Speed);
 #endif
-
+            updateSets();
             break;
           }
 
@@ -354,6 +354,7 @@ void buttonTick() {
 #ifdef GENERAL_DEBUG
             LOG.printf_P(PSTR("Новое значение масштаба: %d\n\r"), modes[currentMode].Scale);
 #endif
+            updateSets();
             break;
           }
 
