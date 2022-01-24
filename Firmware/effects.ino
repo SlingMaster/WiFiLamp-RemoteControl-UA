@@ -4147,7 +4147,7 @@ void cube2dRoutine() {
 // =====================================
 //             © SottNick
 
-
+#ifdef USE_TIME_EFFECT
 #define CLOCK_SAVE_MODE     // удалите или закомментируйте эту строчку, чтобы цифры всегда оставались на одном месте, не двигались по вертикали (не хорошо для светодиодов. выгорают зря)
 #if (HEIGHT > 12) || (HEIGHT < 11)
 #define CLOCK_BLINKING      // удалите или закомментируйте эту строчку, чтобы точки не мигали
@@ -4330,6 +4330,7 @@ void clockRoutine() { // чтобы цифры были не в столбик, 
 #endif //#ifdef CLOCK_BLINKING
 }
 #endif //#if HEIGHT > 10
+#endif
 
 // ============== Smoke ================
 //             © SottNick

@@ -111,10 +111,10 @@ void cycleEffect() {
 void autoSwapEff() {
   if (ONflag && eff_auto && (FavoritesManager::FavoritesRunning == 0)) {
     if (eff_rnd) {
-      currentMode = 1 + random8(MODE_AMOUNT - 3);
+      currentMode = random8(EFF_MATRIX + 1);
       runEffect();
     } else {
-      if (currentMode >= (MODE_AMOUNT - 3)) {
+      if (currentMode > (EFF_MATRIX)) {
         currentMode = 0;
       }
       prevEffect();

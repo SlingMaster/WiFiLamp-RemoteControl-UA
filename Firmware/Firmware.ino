@@ -259,8 +259,7 @@ void setup() {
   custom_eff = jsonReadtoInt(configSetup, "custom_eff");
 
   if (jsonReadtoInt(configSetup, "fav_effect") >= MODE_AMOUNT) {
-    // EFF_FAV = EFF_DROPS;
-    jsonWrite(configSetup, "fav_effect", EFF_FAV);
+    jsonWrite(configSetup, "fav_effect", EFF_MATRIX);
   } else {
     EFF_FAV = jsonReadtoInt(configSetup, "fav_effect");
   }

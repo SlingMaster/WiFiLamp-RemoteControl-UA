@@ -257,6 +257,7 @@ void handle_cmd() {
       body += "\"cfg_save\":\"OK\",";
       writeFile("config.json", configSetup);
       valStr = "";
+      warnDinamicColor(0);
       break;
     case CMD_SAVE_ALARMS :
       // configSetup = valStr;
