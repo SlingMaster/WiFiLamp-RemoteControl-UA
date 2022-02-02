@@ -721,8 +721,6 @@ void poolRoutine()
 
     loadingFlag = false;
     hue = modes[currentMode].Scale * 2.55;
-    //for (int16_t i = 0U; i < NUM_LEDS; i++)
-    //  leds[i] = CHSV(hue, 255U, 255U);
     fillAll(CHSV(hue, 255U, 255U));
     deltaHue = 0U;
     deltaHue2 = 0U;
