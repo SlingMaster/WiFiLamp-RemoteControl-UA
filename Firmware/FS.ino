@@ -179,10 +179,16 @@ void handleFileList() {
   while (dir.next()) {
     File entry = dir.openFile("r");
     if (output != "[") output += ',';
+    /* Bugfix by sergeym11*/
+#if defined (USE_LittleFS)
+    bool isDir = entry.isDirectory();
+#else
     bool isDir = false;
-    output += "{\"type\":\"";
-    output += (isDir) ? "dir" : "file";
-    output += "\",\"name\":\"";
+#endif
+    /* bugfix by sergeym11 */
+    output += F("{\"type\":\"");
+    output += (isDir) ? F("dir") : F("file");
+    output += F("\",\"name\":\"");
 #if defined (USE_LittleFS)
     output += String(entry.name()).substring(0);
 #else
