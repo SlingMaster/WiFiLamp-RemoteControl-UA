@@ -42,9 +42,9 @@ void setFPS() {
 
 //---------------------------------------
 void updateSets() {
-  loadingFlag = true;
-  setFPS();
+  loadingFlag = true; 
   settChanged = true;
+  setFPS();
   eepromTimeout = millis();
 
 #if (USE_MQTT)

@@ -8,7 +8,7 @@ void runServerHTTP(void) {
     espMode = jsonReadtoInt(configSetup, "ESP_mode");
     HTTP.send(200, "text/plain", "OK");
   });
-  
+
   // SSID | Pass | timout -------------------------------------------------
   HTTP.on("/ssid", HTTP_GET, []() {          // сохранение настроек роутера
     jsonWrite(configSetup, "ssid", HTTP.arg("ssid"));
@@ -19,7 +19,7 @@ void runServerHTTP(void) {
     HTTP.send(200, "text/plain", "OK"); // отправляем ответ о выполнении
   });
   // ======================================================================
-  
+
   // Выдаем данные configSetup ===========
   HTTP.on("/config.setup.json", HTTP_GET, []() {
     HTTP.send(200, "application/json", configSetup);
@@ -57,6 +57,18 @@ void warnDinamicColor(uint8_t val) {
     case 7: showWarning(CRGB::Magenta, 1000U, 250U); break;
     default: showWarning(CRGB::White, 1000U, 250U); break;
   }
+}
+
+// ======================================
+void printMSG(String temStr, bool def) {
+  temStr.toCharArray(TextTicker, temStr.length() + 1);
+  currentMode = MODE_AMOUNT - 1;
+  if (def) {
+    modes[currentMode].Brightness = pgm_read_byte(&defaultSettings[currentMode][0]);
+    modes[currentMode].Speed      = pgm_read_byte(&defaultSettings[currentMode][1]);
+    modes[currentMode].Scale      = pgm_read_byte(&defaultSettings[currentMode][2]);
+  }
+  runEffect();
 }
 
 // ======================================
@@ -173,9 +185,7 @@ void handle_cmd() {
         } else {
           temStr = jsonRead(configSetup, "run_text");
         }
-        temStr.toCharArray(TextTicker, temStr.length() + 1);
-        currentMode = MODE_AMOUNT - 1;
-        runEffect();
+        printMSG(temStr, false);
       }
       break;
     case CMD_SCAN:
@@ -246,10 +256,12 @@ void handle_cmd() {
 
     // configure commands ---
     case CMD_CONFIG:
-      warnDinamicColor(2);
+      loadingFlag = false;
+      // warnDinamicColor(2);
       // LOG.println("config Setup:" + configSetup);
       body += "\"cfg\":" + configSetup + ",";
-      body += "\"alarms\":" + readFile("alarm_config.json", 512) + ",";
+      body += "\"alarms\":" + readFile("alarm_config.json", 1024) + ",";
+      loadingFlag = true;
       break;
     case CMD_SAVE_CFG :
       configSetup = valStr;

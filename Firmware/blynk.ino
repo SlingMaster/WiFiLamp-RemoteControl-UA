@@ -166,9 +166,7 @@ void processParams(char *prefix, const char *paramValue)
   // добавляем сброс настроек на значения по умолчанию при выборе всех единичек на всех бегунках
   if (modes[currentMode].Brightness == 1U && modes[currentMode].Speed == 1U && modes[currentMode].Scale == 1U) {
     restoreSettings();
-    loadingFlag = true;
-    settChanged = true;
-    eepromTimeout = millis();
+    updateSets();
 #if (USE_MQTT)
     if (espMode == 1U) {
       MqttManager::needToPublish = true;

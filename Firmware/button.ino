@@ -47,11 +47,7 @@ void showWarning(
 // ---------------------------------------
 void runEffect() {
   FastLED.setBrightness(modes[currentMode].Brightness);
-  loadingFlag = true;
-  settChanged = true;
   updateSets();
-  eepromTimeout = millis();
-
   if (random_on && FavoritesManager::FavoritesRunning) {
     selectedSettings = 1U;
   }
@@ -227,10 +223,8 @@ void buttonTick() {
       jsonWrite(configSetup, "Power", ONflag);
       changePower();
     }
-    settChanged = true;
-    eepromTimeout = millis();
-    loadingFlag = true;
-
+    updateSets();
+    
 #if (USE_MQTT)
     if (espMode == 1U) {
       MqttManager::needToPublish = true;
@@ -330,7 +324,7 @@ void buttonTick() {
 #ifdef PROPERTIES_LEVEL_INDICATOR
             properties_level = 2;
 #endif
-            loadingFlag = true; // без перезапуска эффекта ничего и не увидишь
+            
 #ifdef USE_MULTIPLE_LAMPS_CONTROL
             multipleLampControl();
 #endif  //USE_MULTIPLE_LAMPS_CONTROL
@@ -346,7 +340,7 @@ void buttonTick() {
 #ifdef PROPERTIES_LEVEL_INDICATOR
             properties_level = 3;
 #endif
-            loadingFlag = true; // без перезапуска эффекта ничего и не увидишь
+
 #ifdef USE_MULTIPLE_LAMPS_CONTROL
             multipleLampControl();
 #endif  //USE_MULTIPLE_LAMPS_CONTROL
