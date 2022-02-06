@@ -332,7 +332,10 @@ void handle_cmd() {
       ESP.restart();
       return;
 
-    case CMD_OTA: runOTA(); break;
+    case CMD_OTA:
+      eff_auto = 0;
+      runOTA(); 
+      break;
 
     default:
       break;
