@@ -1947,3 +1947,150 @@ void PlanetEarth() {
   //  scrollImage(imgW, imgH, ff_x - 1);
   //  ff_x++;
 }
+
+
+// =====================================
+//             Мечта Дизайнера
+//                WebTools
+//             © SlingMaster
+// =====================================
+/* --------------------------------- */
+int getRandomPos(uint8_t STEP) {
+  uint8_t val = floor(random(0, (STEP * 16 - WIDTH - 1)) / STEP) * STEP;
+  return -val;
+}
+
+/* --------------------------------- */
+int getHue(uint8_t x, uint8_t y) {
+  return ( x * 32 +  y * 24U );
+}
+
+/* --------------------------------- */
+uint8_t getSaturationStep() {
+  return (modes[currentMode].Speed > 170U) ? ((HEIGHT > 24) ? 12 : 24) : 0;
+}
+
+/* --------------------------------- */
+uint8_t getBrightnessStep() {
+  return (modes[currentMode].Speed < 85U) ? ((HEIGHT > 24) ? 16 : 24) : 0;
+}
+
+/* --------------------------------- */
+void drawPalette(int posX, int posY, uint8_t STEP) {
+  int PX, PY;
+  const uint8_t SZ = STEP - 1;
+  const uint8_t maxY = floor(HEIGHT / SZ);
+  uint8_t sat = getSaturationStep();
+  uint8_t br  = getBrightnessStep();
+
+  FastLED.clear();
+  for (uint8_t y = 0; y < maxY; y++) {
+    for (uint8_t x = 0; x < 16; x++) {
+      PY = y * STEP;
+      PX = posX + x * STEP;
+      if ((PX >= - STEP ) && (PY >= - STEP) && (PX < WIDTH) && (PY < HEIGHT)) {
+        // LOG.printf_P(PSTR("y: %03d | br • %03d | sat • %03d\n"), y, (240U - br * y), sat);
+        drawRecCHSV(PX, PY, PX + SZ, PY + SZ, CHSV( getHue(x, y), (255U - sat * y), (240U - br * y)));
+      }
+    }
+  }
+}
+
+/* --------------------------------- */
+void selectColor(uint8_t sc) {
+  uint8_t offset = (WIDTH >= 16) ? WIDTH * 0.25 : 0;
+  hue = getHue(random(offset, WIDTH - offset), random(HEIGHT));
+  uint8_t sat = getSaturationStep();
+  uint8_t br  = getBrightnessStep();
+
+  for (uint8_t y = 0; y < HEIGHT; y++) {
+    for (uint8_t x = offset; x < (WIDTH - offset); x++) {
+      CHSV curColor = CHSV(hue, (255U - sat * y), (240U - br * y));
+      if (curColor == getPixColorXY(x, y)) {
+        /* show srlect color */
+        drawRecCHSV(x, y, x + sc, y + sc, CHSV( hue, 64U, 255U));
+        FastLED.show();
+        delay(400);
+        drawRecCHSV(x, y, x + sc, y + sc, CHSV( hue, 255U, 255U));
+        y = HEIGHT;
+        x = WIDTH;
+      }
+    }
+  }
+}
+
+/* --------------------------------- */
+void WebTools() {
+  const uint8_t FPS_D = 24U;
+  static uint8_t STEP = 3U;
+  static int posX = -STEP;
+  static int posY = 0;
+  static int nextX = -STEP * 2;
+  static bool stop_moving = true;
+  if (loadingFlag) {
+#if defined(USE_RANDOM_SETS_IN_APP) || defined(RANDOM_SETTINGS_IN_CYCLE_MODE)
+    if (selectedSettings) {
+      // scale | speed
+      // setModeSettings(random(10U, 90U), random(10U, 245U));
+    }
+#endif
+    loadingFlag = false;
+    FPSdelay = 1U;
+    step = 0;
+    STEP = 2U + floor(modes[currentMode].Scale / 35);
+    posX = 0;
+    posY = 0;
+    drawPalette(posX, posY, STEP);
+  }
+  /* auto scenario */
+  switch (step) {
+    case 0:     /* restart ----------- */
+      nextX = 0;
+      FPSdelay = FPS_D;
+      break;
+    case 64:    /* start move -------- */
+      nextX = getRandomPos(STEP); //- (STEP * 16 - WIDTH);
+      FPSdelay = FPS_D;
+      break;
+    case 100:    /* find -------------- */
+      nextX = getRandomPos(STEP);
+      FPSdelay = FPS_D;
+      break;
+    case 150:    /* find 2 ----------- */
+      nextX = getRandomPos(STEP);
+      FPSdelay = FPS_D;
+      break;
+    case 200:    /* find 3 ----------- */
+      // nextX = - STEP * random(4, 8);
+      nextX = getRandomPos(STEP);
+      FPSdelay = FPS_D;
+      break;
+    case 220:   /* select color ------ */
+      FPSdelay = 200U;
+      selectColor(STEP - 1);
+      break;
+    case 222:   /* show color -------- */
+      FPSdelay = FPS_D;
+      nextX = WIDTH;
+      break;
+  }
+  if (posX < nextX) posX++;
+  if (posX > nextX) posX--;
+
+  if (stop_moving)   {
+    FPSdelay = 80U;
+    step++;
+  } else {
+    drawPalette(posX, posY, STEP);
+    if ((nextX == WIDTH) || (nextX == 0)) {
+      /* show select color bar gradient */
+      // LOG.printf_P(PSTR("step: %03d | Next x: %03d • %03d | fps %03d\n"), step, nextX, posX, FPSdelay);
+      if (posX > 1) {
+        gradientHorizontal(0, 0, (posX - 1), HEIGHT, hue, hue, 255U, 96U, 255U);
+      }
+      if (posX > 3) DrawLine(posX - 3, CENTER_Y_MINOR, posX - 3, CENTER_Y_MAJOR, CHSV( hue, 192U, 255U));
+    }
+  }
+
+  stop_moving = (posX == nextX); 
+}
