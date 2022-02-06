@@ -2049,7 +2049,7 @@ void WebTools() {
       FPSdelay = FPS_D;
       break;
     case 64:    /* start move -------- */
-      nextX = getRandomPos(STEP); //- (STEP * 16 - WIDTH);
+      nextX = getRandomPos(STEP);
       FPSdelay = FPS_D;
       break;
     case 100:    /* find -------------- */
@@ -2061,8 +2061,8 @@ void WebTools() {
       FPSdelay = FPS_D;
       break;
     case 200:    /* find 3 ----------- */
-      // nextX = - STEP * random(4, 8);
-      nextX = getRandomPos(STEP);
+      nextX = - STEP * random(4, 8);
+      // nextX = getRandomPos(STEP);
       FPSdelay = FPS_D;
       break;
     case 220:   /* select color ------ */
