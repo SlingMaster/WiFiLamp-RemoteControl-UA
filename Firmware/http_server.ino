@@ -300,6 +300,7 @@ void handle_cmd() {
         custom_eff = val;           // toggle
       }
       return;
+    case CMD_FW_INFO:  
     case CMD_INFO:
       body += getLampID() + ",";
       body += getInfo();
