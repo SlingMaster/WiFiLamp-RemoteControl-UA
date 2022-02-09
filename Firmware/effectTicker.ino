@@ -167,9 +167,7 @@ void effectsTick() {
         FastLED.clear();
       }
 #endif
-
-
-      FastLED.delay(2);
+      FastLED.show();
     }
 
 

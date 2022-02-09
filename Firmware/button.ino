@@ -181,7 +181,7 @@ void showIP() {
 
 void smartLampOff(uint8_t timeout ) {
 #ifdef BUTTON_CAN_SET_SLEEP_TIMER
-  showWarning(CRGB::Blue, 1000, 250U);                        // мигание синим цветом 1 секунду подтверждение включения
+  showWarning(CRGB::Red, 1000, 250U);                        // мигание синим цветом 1 секунду подтверждение включения
   ONflag = true;
   changePower();
   jsonWrite(configSetup, "Power", ONflag);

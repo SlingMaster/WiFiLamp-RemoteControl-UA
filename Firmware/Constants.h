@@ -330,5 +330,6 @@ uint8_t DAWN_TIMEOUT;                                       // сколько р
 #define CMD_SAVE_CFG          (61U)
 #define CMD_SAVE_ALARMS       (62U)
 #define CMD_CUSTOM_EFF        (66U)
+#define CMD_FW_INFO           (69U)
 // -------------------------------------
-String VERSION = "3.4 " + String(MODE_AMOUNT);
+String VERSION = "3.5 " + String(MODE_AMOUNT);
