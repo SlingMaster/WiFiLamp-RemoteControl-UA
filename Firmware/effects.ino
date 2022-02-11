@@ -6940,6 +6940,45 @@ void lumenjerRoutine() {
 }
 
 // =====================================
+//            Цветные кудри
+//           Color Frizzles
+//             © Stepko
+//       адаптация © SlingMaster
+// =====================================
+void ColorFrizzles() {
+  if (loadingFlag) {
+#if defined(USE_RANDOM_SETS_IN_APP) || defined(RANDOM_SETTINGS_IN_CYCLE_MODE)
+    if (selectedSettings) {
+      // scale | speed
+      setModeSettings(random(10U, 90U), 128);
+    }
+    loadingFlag = false;
+    FPSdelay = 10U;
+    deltaValue = 0;
+#endif
+  }
+
+  if (modes[currentMode].Scale > 50) {
+    if (FPSdelay > 48) deltaValue = 0;
+    if (FPSdelay < 5) deltaValue = 1;
+
+    if (deltaValue == 1) {
+      FPSdelay++;
+    } else {
+      FPSdelay--;
+    }
+    blur2d(leds, WIDTH, HEIGHT, 16);
+  } else {
+    FPSdelay = 20;
+    dimAll(240U);
+  }
+  // LOG.printf_P(PSTR("| deltaValue • %03d | fps %03d\n"), deltaValue, FPSdelay);
+  for (byte i = 8; i--;) {
+    leds[XY(beatsin8(12 + i, 0, WIDTH - 1), beatsin8(15 - i, 0, HEIGHT - 1))] = CHSV(beatsin8(12, 0, 255), 255, (255 - FPSdelay * 2));
+  }
+}
+
+// =====================================
 //         ЭФФЕКТЫ НА ЛЮБИТЕЛЯ
 // =====================================
 
