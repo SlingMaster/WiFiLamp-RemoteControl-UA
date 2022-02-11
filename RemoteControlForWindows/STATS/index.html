@@ -1,0 +1,73 @@
+﻿<!DOCTYPE HTML>
+<html lang="en-US-x-Hixie">
+
+<head>
+	<title>Used Stats WiFi Lamp Remote</title>
+	<link rel="shortcut icon" href="img/icon/icon.ico" />
+	<link rel="apple-touch-icon-precomposed" href="img/icon/iIcon.png" />
+	<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+	<!-- Run in full-screen mode. -->
+	<meta name="apple-mobile-web-app-capable" content="yes" />
+	<!-- Make the status bar black with white text. -->
+	<meta name="apple-mobile-web-app-status-bar-style" content="black" />
+	<!-- Disable phone number detection. -->
+	<meta name="format-detection" content="telephone=no" />
+	<!-- Set viewport. -->
+	<meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no" />
+	<link rel="stylesheet" href="fonts/stylesheet.css" type="text/css" charset="utf-8" />
+	<link rel="stylesheet" href="css/assets.min.css" type="text/css" charset="utf-8" />
+	<script type="text/javascript" src="libs/jquery-2.1.4.min.js"></script>
+	<script type="text/javascript" src="js/script.min.js"></script>
+</head>
+
+<body>
+	<div id="win" class="content css-opacity">
+		<div id="main_panel" class="panels shadow">
+			<!--  top panel -->
+			<div class="panel_esp">
+				<div class="cs_top_shadow"></div>
+				<div class="title">WIFI LAMP REMOTE</div>
+				<div class="title_location">application statistic</div>
+				<div id="displays" class="cs_container"></div>
+				<div iclass="cs_label cs_shadow"></div>
+			</div>
+
+			<!-- bottom panel -->
+			<div class="service_container">
+				<div class="frame_service">
+					<iframe id="web_graph" width="450" height="260"></iframe>
+					<div id="icons" class="panel_icons"></div>
+				</div>
+
+				<div class="service_control">
+					<div id="spiner" class="spiner"></div>
+					<div id="graph_title" class="cs_graph_title"></div>
+					<div id="min_max" class="cs_min_max"></div>
+					<div class="line">
+						<div id="entries" class="cs_entries"></div>
+					</div>
+					<div class="button_t_container" onClick="nextGraph(event);">
+						<button id="t1" class="btn_timeline s_t1 select"></button>
+						<button id="t2" class="btn_timeline s_t2"></button>
+						<button id="t3" class="btn_timeline s_t3"></button>
+					</div>
+
+				</div>
+				<div class="button_container" onClick="nextGraph(event);">
+					<button id="prev" class="btn_round s_prev "></button>
+					<button id="next" class="btn_round s_next"></button>
+				</div>
+			</div>
+		</div>
+		<!-- Debug Panel Json View -->
+		<div id="debug" class="panels shadow">
+			<div id="ver" class="version"></div>
+			<div id="json_list" class="cs_json">&#8226;</div>
+			<button class="btn_back" value="back" onClick="clickControl(event);"></button>
+		</div>
+
+	</div>
+</body>
+
+</html>
