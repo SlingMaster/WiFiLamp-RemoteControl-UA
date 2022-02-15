@@ -267,6 +267,7 @@ void saveAlarm(String configAlarm) {
     EepromManager::SaveAlarmsSettings(&k, alarms);
   }
   dawnMode = jsonReadtoInt(configAlarm, "t") - 1;
+  // DAWN_TIMEOUT = jsonReadtoInt(configAlarm, "after") * 60;
   DAWN_TIMEOUT = jsonReadtoInt(configAlarm, "after");
   EepromManager::SaveDawnMode(&dawnMode);
   writeFile("alarm_config.json", configAlarm );
