@@ -1955,9 +1955,15 @@ void PlanetEarth() {
 //             © SlingMaster
 // =====================================
 /* --------------------------------- */
-int getRandomPos(uint8_t STEP) {
+int getRandomPos(uint8_t STEP, int prev) {
   uint8_t val = floor(random(0, (STEP * 16 - WIDTH - 1)) / STEP) * STEP;
-  return -val;
+  /* исключении небольшого поворота */
+  if (abs(val - abs(prev)) > (STEP*3)) {
+    return - val;
+  } else {
+    return - (val + STEP*3);
+  }
+
 }
 
 /* --------------------------------- */
@@ -2021,7 +2027,7 @@ void selectColor(uint8_t sc) {
 
 /* --------------------------------- */
 void WebTools() {
-  const uint8_t FPS_D = 24U;
+  const uint8_t FPS_D = 10U;
   static uint8_t STEP = 3U;
   static int posX = -STEP;
   static int posY = 0;
@@ -2049,20 +2055,19 @@ void WebTools() {
       FPSdelay = FPS_D;
       break;
     case 64:    /* start move -------- */
-      nextX = getRandomPos(STEP);
+      nextX = getRandomPos(STEP, nextX);
       FPSdelay = FPS_D;
       break;
     case 100:    /* find -------------- */
-      nextX = getRandomPos(STEP);
+      nextX = getRandomPos(STEP, nextX);
       FPSdelay = FPS_D;
       break;
     case 150:    /* find 2 ----------- */
-      nextX = getRandomPos(STEP);
+      nextX = getRandomPos(STEP, nextX);
       FPSdelay = FPS_D;
       break;
     case 200:    /* find 3 ----------- */
-      nextX = - STEP * random(4, 8);
-      // nextX = getRandomPos(STEP);
+      nextX = getRandomPos(STEP, nextX);
       FPSdelay = FPS_D;
       break;
     case 220:   /* select color ------ */
@@ -2092,5 +2097,5 @@ void WebTools() {
     }
   }
 
-  stop_moving = (posX == nextX); 
+  stop_moving = (posX == nextX);
 }
