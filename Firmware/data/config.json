@@ -12,6 +12,7 @@
    "eff_interval" : 20,
    "eff_rnd" : 0,
    "eff_sel" : 0,
+   "eff_valid" : 0,
    "effect_always" : 1,
    "fav_effect" : 22,
    "night_bright" : 5,
