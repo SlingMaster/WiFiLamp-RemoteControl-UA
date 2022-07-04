@@ -77,6 +77,17 @@ void  espModeState(uint8_t color) {
 }
 
 //---------------------------------------
+bool isJavelinMode() {
+  if (eff_valid == 2) {
+    currentMode = MODE_AMOUNT - 1;
+  }
+  if (eff_valid == 0) {
+    currentMode = 84;
+  }
+  return !dawnFlag;
+}
+
+//---------------------------------------
 // Global Function
 //---------------------------------------
 void drawRec(uint8_t startX, uint8_t startY, uint8_t endX, uint8_t endY, uint32_t color) {
@@ -491,29 +502,24 @@ void Swirl() {
 // for effect Ukraine
 // -------------------------------------------
 void drawCrest() {
-  static const uint32_t data[9][5] PROGMEM = {
-    {0x000000, 0x000000, 0xFFD700, 0x000000, 0x000000 },
-    {0xFFD700, 0x000000, 0xFFD700, 0x000000, 0xFFD700 },
-    {0xFFD700, 0x000000, 0xFFD700, 0x000000, 0xFFD700 },
-    {0xFFD700, 0x000000, 0xFFD700, 0x000000, 0xFFD700 },
-    {0xFFD700, 0x000000, 0xFFD700, 0x000000, 0xFFD700 },
-    {0xFFD700, 0xFFD700, 0xFFD700, 0xFFD700, 0xFFD700 },
-    {0xFFD700, 0x000000, 0xFFD700, 0x000000, 0xFFD700 },
-    {0x000000, 0xFFD700, 0xFFD700, 0xFFD700, 0x000000 },
-    {0x000000, 0x000000, 0xFFD700, 0x000000, 0x000000 }
+  static const bool data[9][5] = {
+    {0, 0, 1, 0, 0 },
+    {1, 0, 1, 0, 1 },
+    {1, 0, 1, 0, 1 },
+    {1, 0, 1, 0, 1 },
+    {1, 0, 1, 0, 1 },
+    {1, 1, 1, 1, 1 },
+    {1, 0, 1, 0, 1 },
+    {0, 1, 1, 1, 0 },
+    {0, 0, 1, 0, 0 }
   };
-
-  uint8_t posX = CENTER_X_MAJOR - 3;
-  uint8_t posY = 9;
+  uint8_t posX = floor(WIDTH * 0.5) - 3;
+  uint8_t posY = 9; //floor(HEIGHT * 0.5) + 5;
   uint32_t color;
-  if (HEIGHT > 16) {
-    posY = CENTER_Y_MINOR - 1;
-  }
   FastLED.clear();
   for (uint8_t y = 0U; y < 9; y++) {
     for (uint8_t x = 0U; x < 5; x++) {
-      color = data[y][x];
-      drawPixelXY(posX + x, posY - y, color);
+      drawPixelXY(posX + x, posY - y, (data[y][x]) ? CRGB(255, 0xD7, 0) : CRGB(0, 0, 0));
     }
   }
 }
@@ -1958,10 +1964,10 @@ void PlanetEarth() {
 int getRandomPos(uint8_t STEP, int prev) {
   uint8_t val = floor(random(0, (STEP * 16 - WIDTH - 1)) / STEP) * STEP;
   /* исключении небольшого поворота */
-  if (abs(val - abs(prev)) > (STEP*3)) {
+  if (abs(val - abs(prev)) > (STEP * 3)) {
     return - val;
   } else {
-    return - (val + STEP*3);
+    return - (val + STEP * 3);
   }
 
 }
@@ -2098,4 +2104,80 @@ void WebTools() {
   }
 
   stop_moving = (posX == nextX);
+}
+
+// =====================================
+//                Contacts
+//             © Yaroslaw Turbin
+//        Adaptation © SlingMaster
+// =====================================
+
+void Contacts() {
+  static const uint8_t exp_gamma[256] = {
+    0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   1,   1,   1,
+    1,   1,   1,   1,   1,   1,   1,   1,   1,   1,   1,   1,   1,   1,   1,
+    1,   2,   2,   2,   2,   2,   2,   2,   2,   2,   3,   3,   3,   3,   3,
+    4,   4,   4,   4,   4,   5,   5,   5,   5,   5,   6,   6,   6,   7,   7,
+    7,   7,   8,   8,   8,   9,   9,   9,   10,  10,  10,  11,  11,  12,  12,
+    12,  13,  13,  14,  14,  14,  15,  15,  16,  16,  17,  17,  18,  18,  19,
+    19,  20,  20,  21,  21,  22,  23,  23,  24,  24,  25,  26,  26,  27,  28,
+    28,  29,  30,  30,  31,  32,  32,  33,  34,  35,  35,  36,  37,  38,  39,
+    39,  40,  41,  42,  43,  44,  44,  45,  46,  47,  48,  49,  50,  51,  52,
+    53,  54,  55,  56,  57,  58,  59,  60,  61,  62,  63,  64,  65,  66,  67,
+    68,  70,  71,  72,  73,  74,  75,  77,  78,  79,  80,  82,  83,  84,  85,
+    87,  89,  91,  92,  93,  95,  96,  98,  99,  100, 101, 102, 105, 106, 108,
+    109, 111, 112, 114, 115, 117, 118, 120, 121, 123, 125, 126, 128, 130, 131,
+    133, 135, 136, 138, 140, 142, 143, 145, 147, 149, 151, 152, 154, 156, 158,
+    160, 162, 164, 165, 167, 169, 171, 173, 175, 177, 179, 181, 183, 185, 187,
+    190, 192, 194, 196, 198, 200, 202, 204, 207, 209, 211, 213, 216, 218, 220,
+    222, 225, 227, 229, 232, 234, 236, 239, 241, 244, 246, 249, 251, 253, 254,
+    255
+  };
+  if (loadingFlag) {
+#if defined(USE_RANDOM_SETS_IN_APP) || defined(RANDOM_SETTINGS_IN_CYCLE_MODE)
+    if (selectedSettings) {
+      // scale | speed
+      setModeSettings(random(25U, 90U), random(5U, 250U));
+    }
+#endif
+    loadingFlag = false;
+    FPSdelay = 80U;
+    FastLED.clear();
+  }
+
+  int a = millis() / floor((255 - modes[currentMode].Speed) / 10);
+  hue = floor(modes[currentMode].Scale / 17);
+  for (int x = 0; x < WIDTH; x++) {
+    for (int y = 0; y < HEIGHT; y++) {
+      int index = XY(x, y);
+      uint8_t color1 = exp_gamma[sin8((x - 8) * cos8((y + 20) * 4) / 4)];
+      uint8_t color2 = exp_gamma[(sin8(x * 16 + a / 3) + cos8(y * 8 + a / 2)) / 2];
+      uint8_t color3 = exp_gamma[sin8(cos8(x * 8 + a / 3) + sin8(y * 8 + a / 4) + a)];
+      if (hue == 0) {
+        leds[index].b = color3 / 4;
+        leds[index].g = color2;
+        leds[index].r = 0;
+      } else if (hue == 1) {
+        leds[index].b = color1;
+        leds[index].g = 0;
+        leds[index].r = color3 / 4;
+      } else if (hue == 2) {
+        leds[index].b = 0;
+        leds[index].g = color1 / 4;
+        leds[index].r = color3;
+      } else if (hue == 3) {
+        leds[index].b = color1;
+        leds[index].g = color2;
+        leds[index].r = color3;
+      } else if (hue == 4) {
+        leds[index].b = color3;
+        leds[index].g = color1;
+        leds[index].r = color2;
+      } else if (hue == 5) {
+        leds[index].b = color2;
+        leds[index].g = color3;
+        leds[index].r = color1;
+      }
+    }
+  }
 }

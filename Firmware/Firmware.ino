@@ -26,6 +26,7 @@
 // При установке выбираем версию 2.7.4
 // Для WEMOS выбираем плату LOLIN(WEMOS) D1 R2 & mini
 // Для NodeMCU выбираем NodeMCU 1.0 (ESP-12E Module)
+// Ссылка на видео настройки Arduino IDE:  https://www.youtube.com/watch?v=771-Okf0dYs&t=597s
 
 #define FASTLED_USE_PROGMEM 1 // просим библиотеку FASTLED экономить память контроллера на свои палитры
 
@@ -170,6 +171,7 @@ bool ONflag = false;
 uint32_t eepromTimeout;
 bool settChanged = false;
 bool buttonEnabled = true; // это важное первоначальное значение. нельзя делать false по умолчанию
+uint8_t day_night = false;     // если день - true, ночь - false
 
 unsigned char matrixValue[8][16]; //это массив для эффекта Огонь
 
@@ -189,6 +191,8 @@ uint32_t FavoritesManager::nextModeAt = 0UL;
 uint8_t eff_auto = 0;
 uint8_t eff_interval = DEFAULT_FAVORITES_INTERVAL;
 uint8_t eff_rnd = 0;
+uint8_t eff_valid = 0;
+
 
 #ifdef PROPERTIES_LEVEL_INDICATOR
 uint8_t properties_level = 0;
@@ -267,6 +271,7 @@ void setup() {
   eff_auto = jsonReadtoInt(configSetup, "eff_auto");
   eff_interval = jsonReadtoInt(configSetup, "eff_interval");
   eff_rnd = jsonReadtoInt(configSetup, "eff_rnd");
+  eff_valid = jsonReadtoInt(configSetup, "eff_valid");
   WORKGROUP = jsonReadtoInt(configSetup, "workgroup");
   LAMP_LIST = jsonRead(configSetup, "lamp_list");
 
@@ -379,7 +384,7 @@ void setup() {
   // DAWN_TIMEOUT читаем из файла настроек будильника значение не хранится в EPROM
   LOG.println("Чтение файла настроек будильника");
   String configAlarm = readFile("alarm_config.json", 1024);
-  DAWN_TIMEOUT = jsonReadtoInt(configAlarm, "after"); 
+  DAWN_TIMEOUT = jsonReadtoInt(configAlarm, "after");
   LOG.println(configAlarm);
   LOG.println ("DAWN_TIMEOUT | afer : " + String(DAWN_TIMEOUT));
   configAlarm = "";

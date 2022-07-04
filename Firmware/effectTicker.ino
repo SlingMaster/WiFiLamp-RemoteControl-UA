@@ -127,6 +127,8 @@ void (*FuncEff[MODE_AMOUNT])(void) = {
   /* • самое удобное место для добавления нового эффекта • */
   //  ballRoutine,                // Блуждающий кубик
   /* • ------------------------------------------------- • */
+  Contacts,                   // Kонтакти
+  RadialWave,                 // Радіальна хвиля
   Spectrum,                   // Spectrum
   LotusFlower,                // Цветок Лотоса
   ChristmasTree,              // Новогодняя Елка
@@ -151,8 +153,7 @@ void (*FuncEff[MODE_AMOUNT])(void) = {
 
 // -------------------------------------
 void effectsTick() {
-
-  if (!dawnFlag) {
+  if (isJavelinMode()) {
     if (ONflag && (millis() - effTimer >= FPSdelay)) {
       effTimer = millis();
       (*FuncEff[currentMode])();
@@ -177,7 +178,7 @@ void effectsTick() {
       noTimeWarningShow();
     }
 #endif
-  }
+  }  
 }
 
 //--------------------------------------

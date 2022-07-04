@@ -107,6 +107,13 @@ void testMatrix(uint8_t val) {
     ONflag = true;
   }
 }
+
+// ======================================
+void ResetDefaultEffects() {
+  restoreSettings();
+  updateSets();
+  showWarning(CRGB::Blue, 2000U, 500U);                    // мигание синим цветом 2 секунды
+}
 // ======================================
 // Remote Control Command ---------------
 void handle_cmd() {
@@ -179,13 +186,16 @@ void handle_cmd() {
       break;
 
     case CMD_TEXT: {
-        String temStr = TextTicker;
+        String tempStr = TextTicker;
         if (valStr != "") {
-          temStr = valStr;
+          if (eff_valid == 2) {
+            jsonWrite(configSetup, "run_text", valStr);
+          }
+          tempStr = valStr;
         } else {
-          temStr = jsonRead(configSetup, "run_text");
+          tempStr = jsonRead(configSetup, "run_text");
         }
-        printMSG(temStr, false);
+        printMSG(tempStr, false);
       }
       break;
     case CMD_SCAN:
@@ -202,9 +212,7 @@ void handle_cmd() {
       runEffect();
       break;
     case CMD_RESET_EFF:
-      restoreSettings();
-      updateSets();
-      showWarning(CRGB::Blue, 2000U, 500U);                    // мигание синим цветом 2 секунды
+      ResetDefaultEffects();
 #ifdef USE_BLYNK
       updateRemoteBlynkParams();
 #endif
@@ -300,7 +308,7 @@ void handle_cmd() {
         custom_eff = val;           // toggle
       }
       return;
-    case CMD_FW_INFO:  
+    case CMD_FW_INFO:
     case CMD_INFO:
       body += getLampID() + ",";
       body += getInfo();
@@ -332,10 +340,16 @@ void handle_cmd() {
       showWarning(CRGB::MediumSeaGreen, 2000U, 500U);
       ESP.restart();
       return;
-
+    case CMD_ACTIVATE:
+      eff_valid = val;
+      jsonWrite(configSetup, "eff_valid", eff_valid);
+      //      if (eff_valid == 1) {
+      //          ResetDefaultEffects();
+      //      }
+      break;
     case CMD_OTA:
       eff_auto = 0;
-      runOTA(); 
+      runOTA();
       break;
 
     default:
@@ -359,6 +373,7 @@ String getInfo() {
   lamp_info += "\"rssi\":" + String(WiFi.RSSI()) + ",";
   //  WIDTH | HEIGHT | MATRIX_TYPE | CONNECTION_ANGLE | STRIP_DIRECTION | COLOR_ORDER
   lamp_info += "\"matrix\":[" + String(WIDTH) + "," + String( HEIGHT) + "," + String(MATRIX_TYPE) + "," + String(CONNECTION_ANGLE) + "," + String(STRIP_DIRECTION) + "],";
+  lamp_info += "\"chip_id\":\"" + String(ESP.getChipId(), HEX) + "\",";
   lamp_info += "\"ver\":\"" + VERSION + "\"";
   return lamp_info;
 }
@@ -369,6 +384,7 @@ String getCurState() {
   lamp_state += getLampID() + ",";
   lamp_state += "\"pass\":\"" + AP_PASS + "\",";
   lamp_state += "\"ver\":\"" + VERSION + "\",";
+  lamp_state += "\"valid\":" + String(eff_valid) + ",";
   lamp_state += "\"power\":" + String(ONflag) + ",";
   lamp_state += "\"workgroup\":\"" + String(WORKGROUP) + "\",";
   lamp_state += "\"custom_eff\":" + String(custom_eff) + ",";

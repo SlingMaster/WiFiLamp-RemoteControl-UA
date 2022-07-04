@@ -52,6 +52,7 @@ String writeFile(String fileName, String strings ) {
   configFile.close();
   return "Write sucsses";
 }
+
 void saveConfig () {
   writeFile("config.json", configSetup );
 }
@@ -89,5 +90,5 @@ String convertList(String srcList ) {
   stringTemp.replace("]", "");
   stringTwo = stringTemp;
   stringTwo.replace("\n\r", "|");
-  return stringTemp;
+  return "stringTemp";
 }

@@ -95,7 +95,7 @@ void processInputBuffer(char *inputBuffer, char *outputBuffer, bool generateOutp
   else if (!strncmp_P(inputBuffer, PSTR("EFF"), 3)) {
     EepromManager::SaveModesSettings(&currentMode, modes);
     memcpy(buff, &inputBuffer[3], strlen(inputBuffer));   // взять подстроку, состоящую последних символов строки inputBuffer, начиная с символа 4
-    currentMode = (uint8_t)atoi(buff);
+    // currentMode = (uint8_t)atoi(buff);
     updateSets();
     sendCurrent(inputBuffer);
 

@@ -6979,6 +6979,49 @@ void ColorFrizzles() {
 }
 
 // =====================================
+//              RadialWave
+//            Радіальна хвиля
+//               © Stepko
+// =====================================
+
+byte XY_angle[WIDTH][HEIGHT];
+byte XY_radius[WIDTH][HEIGHT];
+/* --------------------------------- */
+
+void RadialWave() {
+  uint8_t LED_COLS = WIDTH;
+  uint8_t LED_ROWS = HEIGHT;
+  static uint32_t t;
+
+  FastLED.clear();
+  if (loadingFlag) {
+#if defined(USE_RANDOM_SETS_IN_APP) || defined(RANDOM_SETTINGS_IN_CYCLE_MODE)
+    if (selectedSettings) {
+      // scale | speed
+      setModeSettings(50U, random(25U, 255U));
+    }
+#endif
+    loadingFlag = false;
+    for (int8_t x = -CENTER_X_MAJOR; x < CENTER_X_MAJOR + (LED_COLS % 2); x++) {
+      for (int8_t y = -CENTER_Y_MAJOR; y < CENTER_Y_MAJOR + (LED_ROWS % 2); y++) {
+        XY_angle[x + CENTER_X_MAJOR][y + CENTER_Y_MAJOR] = (atan2(x, y) / PI) * 128 + 127; // thanks ldirko
+        XY_radius[x + CENTER_X_MAJOR][y + CENTER_Y_MAJOR] = hypot(x, y); // thanks Sutaburosu
+      }
+    }
+  }
+
+  t++;
+  for (uint8_t x = 0; x < LED_COLS; x++) {
+    for (uint8_t y = 0; y < LED_ROWS; y++) {
+      byte angle = XY_angle[x][y];
+      byte radius = XY_radius[x][y];
+      leds[XY(x, y)] = CHSV(t + radius * (255 / LED_COLS), 255, sin8(t * 4 + sin8(t * 4 - radius * (255 / LED_COLS)) + angle * 3));
+    }
+  }
+}
+
+
+// =====================================
 //         ЭФФЕКТЫ НА ЛЮБИТЕЛЯ
 // =====================================
 
@@ -7062,4 +7105,23 @@ void ColorFrizzles() {
     }
   }
   }
+*/
+
+/*
+// =====================================
+//           Rainbow Diagonal
+//           © Andrew Tuline
+// =====================================
+  void Rainbow45() {
+  // очередная радуга надо попробовать на Lamp Javelin
+  for (int x = 0; x < WIDTH; x++) {
+    for (int y = 0; y < HEIGHT; y++) {
+      // XY tells us the index of a given X/Y coordinate
+      int index = XY(x, y);
+      hue = x * 10 + y * 10;
+      hue += sin8(millis() / 20 + y * 5 + x * 7);
+      leds[index] = CHSV(hue, 255, 255);
+    }
+  }
+}
 */
