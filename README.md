@@ -1,5 +1,6 @@
-@Проект устарел и поддерживаться не будет
+#Проект устарел и поддерживаться не будет
 переходите на новый по ссылке https://github.com/SlingMaster/WiFiLampJavelin
+------------------------------------------------------------------------------------------
 
 # WiFiLamp-RemoteControl
 (EN) Firmware for WiFi Lamp by Alex Gyver and cross-platform lamp management software
